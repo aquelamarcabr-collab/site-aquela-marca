@@ -1,6 +1,6 @@
 // Busca produtos publicados no Supabase; usa o catálogo estático (js/products.js) como
 // reserva caso o banco esteja indisponível, garantindo que a loja nunca fique vazia.
-import { supabase } from './supabase.js';
+import { supabase } from './supabase-client.js';
 
 function mapRow(row) {
   return {
