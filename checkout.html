@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout | Aquela Marca</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/svg+xml" href="assets/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><img src="assets/logo-wordmark.svg" alt="Aquela Marca" width="150" height="24"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="loja.html">Loja</a>
+      <a href="colecao.html?c=brasilidades">Brasilidades</a>
+      <a href="personalizados.html">Personalizados</a>
+      <a href="sobre.html">Sobre a Marca</a>
+    </nav>
+    <div class="nav-right">
+      <a href="carrinho.html" class="cart-btn">Carrinho <span class="cart-count">0</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="carrinho.html">Carrinho</a> / Checkout</div>
+      <h1>Finalizar pedido</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" id="checkout-root">
+      <p class="spinner-text">Carregando...</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:1px solid rgba(247,243,236,.12);padding-top:24px;">
+      <span>&copy; <span class="current-year"></span> Aquela Marca. Todos os direitos reservados.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+  var cart = getCart();
+  var root = document.getElementById('checkout-root');
+
+  if (cart.length === 0) {
+    root.innerHTML = '<div class="empty-cart"><h2>Seu carrinho está vazio</h2><p class="mt-1">Adicione produtos antes de finalizar o pedido.</p><a href="loja.html" class="btn btn-primary mt-2">Ir para a loja</a></div>';
+  } else {
+    var total = getCartTotal();
+    var summaryText = cart.map(function (i) {
+      return i.qty + 'x ' + i.name + ' (Tam. ' + i.size + ') — ' + formatPrice(i.price * i.qty);
+    }).join(' | ') + ' — TOTAL: ' + formatPrice(total);
+
+    var itemsHtml = cart.map(function (item) {
+      return '<div class="summary-row"><span>' + item.qty + 'x ' + item.name + ' (' + item.size + ')</span><span>' + formatPrice(item.price * item.qty) + '</span></div>';
+    }).join('');
+
+    root.innerHTML =
+      '<div class="grid" style="grid-template-columns:1.3fr 1fr;gap:48px;align-items:flex-start;">' +
+        '<form id="checkout-form" name="pedido" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/obrigado-pedido.html">' +
+          '<input type="hidden" name="form-name" value="pedido">' +
+          '<input type="hidden" name="resumo_pedido" value="' + summaryText.replace(/"/g, '&quot;') + '">' +
+          '<p style="display:none;"><label>Não preencher: <input name="bot-field"></label></p>' +
+
+          '<h3 class="mt-1" style="margin-bottom:18px;">Dados de contato</h3>' +
+          '<div class="form-row">' +
+            '<div class="field"><label for="nome">Nome completo *</label><input type="text" id="nome" name="nome" required></div>' +
+            '<div class="field"><label for="telefone">Telefone / WhatsApp *</label><input type="tel" id="telefone" name="telefone" required></div>' +
+          '</div>' +
+          '<div class="field"><label for="email">E-mail *</label><input type="email" id="email" name="email" required></div>' +
+
+          '<h3 class="mt-2" style="margin-bottom:18px;">Endereço de entrega</h3>' +
+          '<div class="form-row">' +
+            '<div class="field"><label for="cep">CEP *</label><input type="text" id="cep" name="cep" required></div>' +
+            '<div class="field"><label for="cidade">Cidade *</label><input type="text" id="cidade" name="cidade" required></div>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="field"><label for="endereco">Endereço *</label><input type="text" id="endereco" name="endereco" required></div>' +
+            '<div class="field"><label for="numero">Número *</label><input type="text" id="numero" name="numero" required></div>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<div class="field"><label for="bairro">Bairro *</label><input type="text" id="bairro" name="bairro" required></div>' +
+            '<div class="field"><label for="estado">Estado *</label><input type="text" id="estado" name="estado" required maxlength="2" placeholder="Ex: SP"></div>' +
+          '</div>' +
+          '<div class="field"><label for="complemento">Complemento</label><input type="text" id="complemento" name="complemento"></div>' +
+
+          '<div class="field mt-1"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes" placeholder="Alguma informação adicional sobre o pedido ou entrega?"></textarea></div>' +
+
+          '<p class="form-note">Pagamento: nossa equipe entrará em contato pelo WhatsApp para confirmar a forma de pagamento (Pix, cartão ou link de pagamento) antes do envio.</p>' +
+          '<button type="submit" class="btn btn-primary btn-block mt-2">Confirmar pedido</button>' +
+        '</form>' +
+        '<div class="cart-summary">' +
+          '<h3 style="margin-bottom:18px;">Seu pedido</h3>' +
+          itemsHtml +
+          '<div class="summary-row total"><span>Total</span><span>' + formatPrice(total) + '</span></div>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('checkout-form').addEventListener('submit', function () {
+      window.setTimeout(clearCart, 100);
+    });
+  }
+</script>
+</body>
+</html>

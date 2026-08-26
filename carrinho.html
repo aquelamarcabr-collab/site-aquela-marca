@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrinho | Aquela Marca</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/svg+xml" href="assets/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href="index.html" class="logo"><img src="assets/logo-wordmark.svg" alt="Aquela Marca" width="150" height="24"></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html">Home</a>
+      <a href="loja.html">Loja</a>
+      <a href="colecao.html?c=brasilidades">Brasilidades</a>
+      <a href="personalizados.html">Personalizados</a>
+      <a href="sobre.html">Sobre a Marca</a>
+    </nav>
+    <div class="nav-right">
+      <a href="carrinho.html" class="cart-btn">Carrinho <span class="cart-count">0</span></a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Carrinho</div>
+      <h1>Carrinho</h1>
+    </div>
+  </section>
+
+  <section>
+    <div class="container" id="cart-root">
+      <p class="spinner-text">Carregando...</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom" style="border-top:1px solid rgba(247,243,236,.12);padding-top:24px;">
+      <span>&copy; <span class="current-year"></span> Aquela Marca. Todos os direitos reservados.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5511900000000" class="wa-float" target="_blank" rel="noopener" aria-label="Fale conosco no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+</a>
+
+<script src="js/products.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderCart() {
+    var cart = getCart();
+    var root = document.getElementById('cart-root');
+
+    if (cart.length === 0) {
+      root.innerHTML = '<div class="empty-cart"><h2>Seu carrinho está vazio</h2><p class="mt-1">Que tal dar uma olhada na coleção Brasilidades?</p><a href="loja.html" class="btn btn-primary mt-2">Ir para a loja</a></div>';
+      return;
+    }
+
+    var rows = cart.map(function (item, i) {
+      return '<tr>' +
+        '<td><div class="cart-item-info"><div class="cart-thumb ph-' + item.theme + '"></div><div><h4>' + item.name + '</h4><div class="meta">Tamanho: ' + item.size + '</div><button class="remove-btn" data-index="' + i + '">Remover</button></div></div></td>' +
+        '<td><div class="qty-control"><button data-minus="' + i + '">&minus;</button><span>' + item.qty + '</span><button data-plus="' + i + '">&plus;</button></div></td>' +
+        '<td>' + formatPrice(item.price) + '</td>' +
+        '<td>' + formatPrice(item.price * item.qty) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    var total = getCartTotal();
+
+    root.innerHTML =
+      '<div class="grid" style="grid-template-columns:2fr 1fr;gap:48px;align-items:flex-start;">' +
+        '<table class="cart-table"><thead><tr><th>Produto</th><th>Quantidade</th><th>Preço</th><th>Subtotal</th></tr></thead><tbody>' + rows + '</tbody></table>' +
+        '<div class="cart-summary">' +
+          '<h3 style="margin-bottom:18px;">Resumo</h3>' +
+          '<div class="summary-row"><span>Subtotal</span><span>' + formatPrice(total) + '</span></div>' +
+          '<div class="summary-row"><span>Frete</span><span>Calculado no checkout</span></div>' +
+          '<div class="summary-row total"><span>Total</span><span>' + formatPrice(total) + '</span></div>' +
+          '<a href="checkout.html" class="btn btn-primary btn-block mt-2">Finalizar compra</a>' +
+          '<a href="loja.html" class="link-underline mt-1" style="display:inline-block;">Continuar comprando</a>' +
+        '</div>' +
+      '</div>';
+
+    root.querySelectorAll('[data-minus]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = +b.dataset.minus;
+        updateCartQty(i, getCart()[i].qty - 1);
+        renderCart();
+      });
+    });
+    root.querySelectorAll('[data-plus]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var i = +b.dataset.plus;
+        updateCartQty(i, getCart()[i].qty + 1);
+        renderCart();
+      });
+    });
+    root.querySelectorAll('.remove-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        removeFromCart(+b.dataset.index);
+        renderCart();
+      });
+    });
+  }
+
+  renderCart();
+</script>
+</body>
+</html>

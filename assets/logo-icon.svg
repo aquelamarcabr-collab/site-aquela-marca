@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aquela Marca">
+  <circle cx="32" cy="32" r="30" fill="#16140F"/>
+  <circle cx="32" cy="32" r="26.5" fill="none" stroke="#B2532E" stroke-width="1"/>
+  <text x="32" y="41" font-family="Georgia,'Times New Roman',serif" font-size="24" font-style="italic" font-weight="600" fill="#F7F3EC" text-anchor="middle">AM</text>
+</svg>
