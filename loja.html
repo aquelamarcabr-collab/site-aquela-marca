@@ -104,15 +104,38 @@
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script>
-  document.getElementById('products-list').innerHTML = PRODUCTS.map(function (p) {
-    return '<a href="produto.html?slug=' + p.slug + '" class="product-card reveal" data-collection="' + p.collectionSlug + '">' +
-      '<div class="product-photo ph-' + p.theme + '">' +
-        (p.tag ? '<span class="tag">' + p.tag + '</span>' : '') +
-        '<div class="label"><span>' + p.collection + '</span><h3>' + p.name + '</h3></div>' +
-      '</div>' +
-      '<div class="product-info"><div><h4>' + p.name + '</h4><div class="collection-tag">' + p.collection + '</div></div><span class="price">' + formatPrice(p.price) + '</span></div>' +
-    '</a>';
-  }).join('');
+  function renderProducts(products) {
+    document.getElementById('products-list').innerHTML = products.map(function (p) {
+      return '<a href="produto.html?slug=' + p.slug + '" class="product-card reveal in" data-collection="' + p.collectionSlug + '">' +
+        '<div class="product-photo ph-' + p.theme + '">' +
+          (p.tag ? '<span class="tag">' + p.tag + '</span>' : '') +
+          '<div class="label"><span>' + p.collection + '</span><h3>' + p.name + '</h3></div>' +
+        '</div>' +
+        '<div class="product-info"><div><h4>' + p.name + '</h4><div class="collection-tag">' + p.collection + '</div></div><span class="price">' + formatPrice(p.price) + '</span></div>' +
+      '</a>';
+    }).join('');
+
+    var filterBtns = document.querySelectorAll('.filter-btn');
+    var productItems = document.querySelectorAll('[data-collection]');
+    filterBtns.forEach(function (btn) {
+      btn.onclick = function () {
+        filterBtns.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var cat = btn.getAttribute('data-filter');
+        productItems.forEach(function (item) {
+          var match = cat === 'all' || item.getAttribute('data-collection') === cat;
+          item.style.display = match ? '' : 'none';
+        });
+      };
+    });
+  }
+  renderProducts(PRODUCTS);
+</script>
+<script type="module">
+  import { fetchProducts } from './js/products-api.js';
+  fetchProducts().then(function (products) {
+    if (products && products.length) renderProducts(products);
+  }).catch(function () {});
 </script>
 </body>
 </html>

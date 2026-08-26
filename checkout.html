@@ -118,5 +118,46 @@
     });
   }
 </script>
+<script type="module">
+  import { supabase } from './js/supabase.js';
+
+  var checkoutForm = document.getElementById('checkout-form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var fd = new FormData(checkoutForm);
+      var itens = cart.map(function (i) {
+        return { slug: i.slug, name: i.name, size: i.size, qty: i.qty, price: i.price };
+      });
+
+      var order = {
+        nome: fd.get('nome'),
+        telefone: fd.get('telefone'),
+        email: fd.get('email'),
+        cep: fd.get('cep'),
+        cidade: fd.get('cidade'),
+        endereco: fd.get('endereco'),
+        numero: fd.get('numero'),
+        bairro: fd.get('bairro'),
+        estado: fd.get('estado'),
+        complemento: fd.get('complemento') || null,
+        observacoes: fd.get('observacoes') || null,
+        itens: itens,
+        total: getCartTotal()
+      };
+
+      try {
+        await Promise.race([
+          supabase.from('orders').insert(order),
+          new Promise(function (resolve) { setTimeout(resolve, 3000); })
+        ]);
+      } catch (err) {
+        console.error('Erro ao salvar pedido no painel admin:', err);
+      }
+
+      checkoutForm.submit();
+    });
+  }
+</script>
 </body>
 </html>

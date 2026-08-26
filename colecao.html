@@ -111,6 +111,19 @@
   var collection = getCollectionBySlug(slug);
   var banner = document.getElementById('collection-banner');
 
+  function renderCollectionProducts(allProducts) {
+    var products = allProducts.filter(function (p) { return p.collectionSlug === slug; });
+    document.getElementById('products-list').innerHTML = products.map(function (p) {
+      return '<a href="produto.html?slug=' + p.slug + '" class="product-card reveal in">' +
+        '<div class="product-photo ph-' + p.theme + '">' +
+          (p.tag ? '<span class="tag">' + p.tag + '</span>' : '') +
+          '<div class="label"><span>' + p.collection + '</span><h3>' + p.name + '</h3></div>' +
+        '</div>' +
+        '<div class="product-info"><div><h4>' + p.name + '</h4><div class="collection-tag">' + p.collection + '</div></div><span class="price">' + formatPrice(p.price) + '</span></div>' +
+      '</a>';
+    }).join('');
+  }
+
   if (!collection) {
     document.getElementById('collection-name').textContent = 'Coleção não encontrada';
     document.getElementById('collection-manifesto').textContent = 'Volte para a loja e confira nossas coleções disponíveis.';
@@ -121,17 +134,15 @@
     document.getElementById('collection-tagline').textContent = collection.tagline;
     document.getElementById('collection-name').textContent = collection.name;
     document.getElementById('collection-manifesto').textContent = collection.manifesto;
-
-    var products = getProductsByCollection(slug);
-    document.getElementById('products-list').innerHTML = products.map(function (p) {
-      return '<a href="produto.html?slug=' + p.slug + '" class="product-card reveal">' +
-        '<div class="product-photo ph-' + p.theme + '">' +
-          (p.tag ? '<span class="tag">' + p.tag + '</span>' : '') +
-          '<div class="label"><span>' + p.collection + '</span><h3>' + p.name + '</h3></div>' +
-        '</div>' +
-        '<div class="product-info"><div><h4>' + p.name + '</h4><div class="collection-tag">' + p.collection + '</div></div><span class="price">' + formatPrice(p.price) + '</span></div>' +
-      '</a>';
-    }).join('');
+    renderCollectionProducts(PRODUCTS);
+  }
+</script>
+<script type="module">
+  import { fetchProducts } from './js/products-api.js';
+  if (collection) {
+    fetchProducts().then(function (products) {
+      if (products && products.length) renderCollectionProducts(products);
+    }).catch(function () {});
   }
 </script>
 </body>

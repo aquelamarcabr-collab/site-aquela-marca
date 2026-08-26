@@ -99,8 +99,10 @@
 <script>
   var params = new URLSearchParams(location.search);
   var slug = params.get('slug');
-  var product = slug ? getProductBySlug(slug) : null;
   var root = document.getElementById('product-root');
+
+  function renderProduct(products) {
+  var product = slug ? products.find(function (p) { return p.slug === slug; }) : null;
 
   if (!product) {
     root.innerHTML = '<div class="empty-cart" style="grid-column:1/-1;"><h2>Produto não encontrado</h2><p class="mt-1"><a href="loja.html" class="link-underline">Voltar para a loja</a></p></div>';
@@ -176,6 +178,14 @@
       document.getElementById('add-feedback').classList.add('show');
     });
   }
+  }
+  renderProduct(PRODUCTS);
+</script>
+<script type="module">
+  import { fetchProducts } from './js/products-api.js';
+  fetchProducts().then(function (products) {
+    if (products && products.length) renderProduct(products);
+  }).catch(function () {});
 </script>
 </body>
 </html>

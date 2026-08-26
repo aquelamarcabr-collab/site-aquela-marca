@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Admin — Aquela Marca</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="../assets/logo-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<div class="admin-topbar">
+  <div class="container">
+    <img src="../assets/logo-wordmark-white.svg" alt="Aquela Marca">
+    <div class="who">
+      <strong id="user-email">...</strong>
+      <a href="../index.html" class="btn btn-outline btn-sm">Ver site</a>
+      <button class="btn btn-primary btn-sm" id="logout-btn">Sair</button>
+    </div>
+  </div>
+</div>
+
+<main class="admin-main">
+  <div class="container">
+
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" data-tab="orders">Pedidos</button>
+      <button class="admin-tab-btn" data-tab="personalizados">Personalizados</button>
+      <button class="admin-tab-btn" data-tab="products">Produtos</button>
+    </div>
+
+    <!-- PEDIDOS -->
+    <section class="admin-panel active" id="panel-orders">
+      <div class="admin-toolbar">
+        <h2>Pedidos</h2>
+        <button class="icon-btn" id="refresh-orders">Atualizar</button>
+      </div>
+      <div class="admin-card-list" id="orders-list"><p class="spinner-text">Carregando...</p></div>
+    </section>
+
+    <!-- PERSONALIZADOS -->
+    <section class="admin-panel" id="panel-personalizados">
+      <div class="admin-toolbar">
+        <h2>Pedidos personalizados</h2>
+        <button class="icon-btn" id="refresh-personalizados">Atualizar</button>
+      </div>
+      <div class="admin-card-list" id="personalizados-list"><p class="spinner-text">Carregando...</p></div>
+    </section>
+
+    <!-- PRODUTOS -->
+    <section class="admin-panel" id="panel-products">
+      <div class="admin-toolbar">
+        <h2>Produtos</h2>
+        <button class="btn btn-primary btn-sm" id="new-product-btn">+ Novo produto</button>
+      </div>
+      <div class="admin-card-list" id="products-list"><p class="spinner-text">Carregando...</p></div>
+    </section>
+
+  </div>
+</main>
+
+<!-- Modal editor de produto -->
+<div class="modal-overlay" id="product-modal">
+  <div class="modal-box">
+    <h2 id="modal-title">Novo produto</h2>
+    <form id="product-form">
+      <input type="hidden" id="product-id">
+      <div class="field">
+        <label for="p-name">Nome *</label>
+        <input type="text" id="p-name" required>
+      </div>
+      <div class="field">
+        <label for="p-slug">Slug (URL) *</label>
+        <input type="text" id="p-slug" required pattern="[a-z0-9\-]+">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="p-collection">Coleção</label>
+          <input type="text" id="p-collection" value="Brasilidades">
+        </div>
+        <div class="field">
+          <label for="p-price">Preço (R$) *</label>
+          <input type="number" id="p-price" step="0.01" min="0" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="p-tag">Selo (opcional)</label>
+        <input type="text" id="p-tag" placeholder="Ex: Novo">
+      </div>
+      <div class="field">
+        <label>Cor de exibição (enquanto não há foto real)</label>
+        <div class="theme-picker" id="theme-picker">
+          <div class="theme-swatch ph-amazonas" data-theme="amazonas" title="Amazonas"></div>
+          <div class="theme-swatch ph-rio" data-theme="rio" title="Rio de Janeiro"></div>
+          <div class="theme-swatch ph-sp" data-theme="sp" title="São Paulo"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tamanhos disponíveis</label>
+        <div class="size-check-row">
+          <label class="size-check"><input type="checkbox" value="P"> P</label>
+          <label class="size-check"><input type="checkbox" value="M"> M</label>
+          <label class="size-check"><input type="checkbox" value="G"> G</label>
+          <label class="size-check"><input type="checkbox" value="GG"> GG</label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="p-short">Resumo (aparece no card)</label>
+        <textarea id="p-short" style="min-height:60px;"></textarea>
+      </div>
+      <div class="field">
+        <label for="p-desc">Descrição completa</label>
+        <textarea id="p-desc" style="min-height:120px;"></textarea>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="p-published" checked>
+        <label for="p-published" style="margin:0;">Publicado (visível na loja)</label>
+      </div>
+      <div class="admin-error" id="product-error"></div>
+      <div class="modal-actions">
+        <button type="button" class="icon-btn" id="cancel-product-btn">Cancelar</button>
+        <button type="submit" class="btn btn-primary" id="save-product-btn">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { supabase } from '../js/supabase.js';
+
+  /* ---------- Auth guard ---------- */
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = 'login.html';
+  } else {
+    document.getElementById('user-email').textContent = session.user.email;
+  }
+  supabase.auth.onAuthStateChange((event, sess) => { if (!sess) window.location.href = 'login.html'; });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = 'login.html';
+  });
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('.admin-tab-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.admin-tab-btn').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.admin-panel').forEach((p) => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function escapeHtml(str) {
+    return String(str || '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+  function formatDateTime(iso) {
+    return new Date(iso).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+  function formatPrice(v) {
+    return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+  function slugify(text) {
+    return text.toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+  }
+
+  /* ---------- Pedidos ---------- */
+  const ordersList = document.getElementById('orders-list');
+  const orderStatusLabels = { novo: 'Novo', pago: 'Pago', enviado: 'Enviado', concluido: 'Concluído', cancelado: 'Cancelado' };
+
+  async function loadOrders() {
+    ordersList.innerHTML = '<p class="spinner-text">Carregando...</p>';
+    const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
+    if (error) { ordersList.innerHTML = '<p class="spinner-text">Erro: ' + escapeHtml(error.message) + '</p>'; return; }
+    if (!data || data.length === 0) { ordersList.innerHTML = '<div class="empty-state">Nenhum pedido recebido ainda.</div>'; return; }
+
+    ordersList.innerHTML = data.map((o) => {
+      const itens = Array.isArray(o.itens) ? o.itens : [];
+      const itensText = itens.map((i) => i.qty + 'x ' + i.name + ' (' + i.size + ')').join(', ');
+      return `
+      <div class="lead-card">
+        <div class="main">
+          <h3>${escapeHtml(o.nome)}</h3>
+          <div class="meta-row">
+            <a href="https://wa.me/55${(o.telefone||'').replace(/\D/g,'')}" target="_blank" rel="noopener">📞 ${escapeHtml(o.telefone)}</a>
+            <a href="mailto:${escapeHtml(o.email)}">✉️ ${escapeHtml(o.email)}</a>
+            <span>📍 ${escapeHtml(o.endereco)}, ${escapeHtml(o.numero)} — ${escapeHtml(o.bairro)}, ${escapeHtml(o.cidade)}/${escapeHtml(o.estado)}</span>
+          </div>
+          <div class="items">${escapeHtml(itensText)} — <strong>${formatPrice(o.total)}</strong></div>
+        </div>
+        <div class="side">
+          <span class="lead-date">${formatDateTime(o.created_at)}</span>
+          <select data-id="${o.id}" class="order-status-select">
+            ${Object.keys(orderStatusLabels).map((k) => `<option value="${k}" ${o.status===k?'selected':''}>${orderStatusLabels[k]}</option>`).join('')}
+          </select>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.querySelectorAll('.order-status-select').forEach((sel) => {
+      sel.addEventListener('change', async () => {
+        await supabase.from('orders').update({ status: sel.value }).eq('id', sel.dataset.id);
+      });
+    });
+  }
+  document.getElementById('refresh-orders').addEventListener('click', loadOrders);
+
+  /* ---------- Personalizados ---------- */
+  const persoList = document.getElementById('personalizados-list');
+
+  async function loadPersonalizados() {
+    persoList.innerHTML = '<p class="spinner-text">Carregando...</p>';
+    const { data, error } = await supabase.from('personalizados').select('*').order('created_at', { ascending: false });
+    if (error) { persoList.innerHTML = '<p class="spinner-text">Erro: ' + escapeHtml(error.message) + '</p>'; return; }
+    if (!data || data.length === 0) { persoList.innerHTML = '<div class="empty-state">Nenhum pedido personalizado ainda.</div>'; return; }
+
+    persoList.innerHTML = data.map((p) => `
+      <div class="lead-card">
+        <div class="main">
+          <h3>${escapeHtml(p.nome)} ${p.para_quem ? '· ' + escapeHtml(p.para_quem) : ''}</h3>
+          <div class="meta-row">
+            <a href="https://wa.me/55${(p.telefone||'').replace(/\D/g,'')}" target="_blank" rel="noopener">📞 ${escapeHtml(p.telefone)}</a>
+            <a href="mailto:${escapeHtml(p.email)}">✉️ ${escapeHtml(p.email)}</a>
+            ${p.tamanho ? `<span>Tamanho: ${escapeHtml(p.tamanho)}</span>` : ''}
+          </div>
+          ${p.mensagem ? `<div class="items">${escapeHtml(p.mensagem)}</div>` : ''}
+        </div>
+        <div class="side">
+          <span class="lead-date">${formatDateTime(p.created_at)}</span>
+          <select data-id="${p.id}" class="perso-status-select">
+            <option value="novo" ${p.status==='novo'?'selected':''}>Novo</option>
+            <option value="em_contato" ${p.status==='em_contato'?'selected':''}>Em contato</option>
+            <option value="concluido" ${p.status==='concluido'?'selected':''}>Concluído</option>
+          </select>
+        </div>
+      </div>`).join('');
+
+    document.querySelectorAll('.perso-status-select').forEach((sel) => {
+      sel.addEventListener('change', async () => {
+        await supabase.from('personalizados').update({ status: sel.value }).eq('id', sel.dataset.id);
+      });
+    });
+  }
+  document.getElementById('refresh-personalizados').addEventListener('click', loadPersonalizados);
+
+  /* ---------- Produtos ---------- */
+  const productsList = document.getElementById('products-list');
+  const modal = document.getElementById('product-modal');
+  const productForm = document.getElementById('product-form');
+  const productError = document.getElementById('product-error');
+  let selectedTheme = 'amazonas';
+  let editingId = null;
+  let slugTouched = false;
+
+  document.querySelectorAll('.theme-swatch').forEach((sw) => {
+    sw.addEventListener('click', () => {
+      document.querySelectorAll('.theme-swatch').forEach((s) => s.classList.remove('active'));
+      sw.classList.add('active');
+      selectedTheme = sw.dataset.theme;
+    });
+  });
+
+  async function loadProducts() {
+    productsList.innerHTML = '<p class="spinner-text">Carregando...</p>';
+    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    if (error) { productsList.innerHTML = '<p class="spinner-text">Erro: ' + escapeHtml(error.message) + '</p>'; return; }
+    if (!data || data.length === 0) { productsList.innerHTML = '<div class="empty-state">Nenhum produto cadastrado ainda.</div>'; return; }
+
+    productsList.innerHTML = data.map((p) => `
+      <div class="product-row">
+        <div class="thumb ph-${p.theme}"></div>
+        <div class="info">
+          <h3>${escapeHtml(p.name)}</h3>
+          <div class="meta">
+            <span class="status-badge ${p.published ? 'status-concluido' : 'status-novo'}">${p.published ? 'Publicado' : 'Rascunho'}</span>
+            &nbsp;·&nbsp; ${escapeHtml(p.collection)} &nbsp;·&nbsp; ${formatPrice(p.price)}
+          </div>
+        </div>
+        <div class="actions">
+          <button class="icon-btn" data-edit="${p.id}">Editar</button>
+          <button class="icon-btn danger" data-delete="${p.id}">Excluir</button>
+        </div>
+      </div>`).join('');
+
+    document.querySelectorAll('[data-edit]').forEach((btn) => {
+      btn.addEventListener('click', () => openEditor(data.find((p) => p.id === btn.dataset.edit)));
+    });
+    document.querySelectorAll('[data-delete]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        if (!confirm('Excluir este produto?')) return;
+        await supabase.from('products').delete().eq('id', btn.dataset.delete);
+        loadProducts();
+      });
+    });
+  }
+
+  function openEditor(p) {
+    productError.classList.remove('show');
+    editingId = p ? p.id : null;
+    slugTouched = !!p;
+    document.getElementById('modal-title').textContent = p ? 'Editar produto' : 'Novo produto';
+    document.getElementById('p-name').value = p ? p.name : '';
+    document.getElementById('p-slug').value = p ? p.slug : '';
+    document.getElementById('p-collection').value = p ? p.collection : 'Brasilidades';
+    document.getElementById('p-price').value = p ? p.price : '';
+    document.getElementById('p-tag').value = p ? (p.tag || '') : '';
+    document.getElementById('p-short').value = p ? (p.short_description || '') : '';
+    document.getElementById('p-desc').value = p ? (p.description || '') : '';
+    document.getElementById('p-published').checked = p ? p.published : true;
+
+    selectedTheme = p ? p.theme : 'amazonas';
+    document.querySelectorAll('.theme-swatch').forEach((s) => s.classList.toggle('active', s.dataset.theme === selectedTheme));
+
+    const sizes = p ? (p.sizes || []) : ['P', 'M', 'G', 'GG'];
+    document.querySelectorAll('.size-check input').forEach((cb) => { cb.checked = sizes.includes(cb.value); });
+
+    modal.classList.add('show');
+  }
+
+  document.getElementById('new-product-btn').addEventListener('click', () => openEditor(null));
+  document.getElementById('cancel-product-btn').addEventListener('click', () => modal.classList.remove('show'));
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('show'); });
+  document.getElementById('p-name').addEventListener('input', (e) => {
+    if (!slugTouched) document.getElementById('p-slug').value = slugify(e.target.value);
+  });
+  document.getElementById('p-slug').addEventListener('input', () => { slugTouched = true; });
+
+  productForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    productError.classList.remove('show');
+    const saveBtn = document.getElementById('save-product-btn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Salvando...';
+
+    const sizes = Array.from(document.querySelectorAll('.size-check input:checked')).map((cb) => cb.value);
+    const collection = document.getElementById('p-collection').value.trim() || 'Brasilidades';
+
+    const record = {
+      name: document.getElementById('p-name').value.trim(),
+      slug: slugify(document.getElementById('p-slug').value.trim()),
+      collection: collection,
+      collection_slug: slugify(collection),
+      theme: selectedTheme,
+      price: parseFloat(document.getElementById('p-price').value),
+      tag: document.getElementById('p-tag').value.trim() || null,
+      sizes: sizes,
+      short_description: document.getElementById('p-short').value.trim(),
+      description: document.getElementById('p-desc').value.trim(),
+      published: document.getElementById('p-published').checked
+    };
+
+    let error;
+    if (editingId) {
+      ({ error } = await supabase.from('products').update(record).eq('id', editingId));
+    } else {
+      ({ error } = await supabase.from('products').insert(record));
+    }
+
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Salvar';
+
+    if (error) {
+      productError.textContent = error.code === '23505' ? 'Já existe um produto com esse slug.' : 'Erro ao salvar: ' + error.message;
+      productError.classList.add('show');
+      return;
+    }
+
+    modal.classList.remove('show');
+    loadProducts();
+  });
+
+  loadOrders();
+  loadPersonalizados();
+  loadProducts();
+</script>
+</body>
+</html>

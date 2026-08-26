@@ -196,5 +196,34 @@
     });
   });
 </script>
+<script type="module">
+  import { supabase } from './js/supabase.js';
+
+  var form = document.getElementById('personalizado-form');
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var fd = new FormData(form);
+
+    var record = {
+      para_quem: fd.get('para_quem') || null,
+      mensagem: fd.get('mensagem'),
+      nome: fd.get('nome'),
+      telefone: fd.get('telefone'),
+      email: fd.get('email'),
+      tamanho: fd.get('tamanho') || null
+    };
+
+    try {
+      await Promise.race([
+        supabase.from('personalizados').insert(record),
+        new Promise(function (resolve) { setTimeout(resolve, 3000); })
+      ]);
+    } catch (err) {
+      console.error('Erro ao salvar pedido personalizado no painel admin:', err);
+    }
+
+    form.submit();
+  });
+</script>
 </body>
 </html>
