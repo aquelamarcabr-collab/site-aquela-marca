@@ -47,10 +47,11 @@ Marca criada do zero em SVG (`assets/logo-wordmark.svg`, versão branca e ícone
 
 ## Produtos e preços (importante)
 
-Como o cliente ainda não enviou fotos, preços definitivos nem catálogo completo, o site foi lançado com **3 produtos de exemplo** da coleção Brasilidades (Amazonas, Rio de Janeiro, São Paulo), com fotos placeholder (blocos tipográficos coloridos, sem fingir ser fotografia real) e preço de exemplo (R$ 149,90). Edite `js/products.js` para:
-- Trocar `theme` por uma imagem real (ajuste o CSS `.ph-*` em `css/style.css`, ou substitua os blocos `.product-photo` por `<img>`).
-- Ajustar preços, tamanhos disponíveis e descrições.
-- Adicionar novos produtos/coleções (edite também `COLLECTIONS`).
+Como o cliente ainda não enviou fotos, preços definitivos nem catálogo completo, o site foi lançado com **3 produtos de exemplo** da coleção Brasilidades (Amazonas, Rio de Janeiro, São Paulo), com fotos placeholder (blocos tipográficos coloridos, sem fingir ser fotografia real) e preço de exemplo (R$ 149,90).
+
+**A partir de agora, o catálogo é editado pelo painel admin** (`/admin/` → aba Produtos), não mais direto no código — é lá que se ajustam preços, tamanhos, descrições e se cadastram novos produtos. `js/products.js` continua no projeto apenas como reserva (usado automaticamente só se o banco estiver indisponível), então pode ficar desatualizado sem problema.
+
+Fotos reais ainda não são suportadas via upload no painel (os produtos usam blocos de cor no lugar de foto). Quando o cliente tiver as fotos, me avise para adicionarmos upload de imagem.
 
 ## Carrinho e Checkout
 
@@ -60,9 +61,18 @@ O carrinho funciona 100% no navegador (localStorage), sem backend. O checkout **
 
 Fluxo com 5 etapas: para quem é a peça, escolha de arte, posicionamento, história/foto de referência e dados de contato. As etapas **"Escolha a arte"** e **"Posicionamento"** foram deixadas na estrutura (conforme pedido) mas estão marcadas como **"Em breve"** e não são interativas ainda — é a área que o cliente pediu para já deixar reservada, sem ativar no primeiro momento. O formulário aceita upload de foto de referência (via Netlify Forms, que suporta anexos).
 
-## Painel Admin (pendente)
+## Painel Admin
 
-Nos próximos passos, o mesmo padrão do site de eventos (login com Supabase + painel para gerenciar pedidos, personalizados e produtos) pode ser adicionado aqui. Isso ainda não foi implementado nesta primeira entrega — avise quando quiser que eu monte o painel.
+Disponível em `/admin/login.html`. Login: `aquelamarca.br@gmail.com` — a senha foi enviada separadamente no chat (não fica salva neste repositório). Recomendo trocá-la após o primeiro acesso (Supabase → Authentication → Users → ⋮ → Reset password).
+
+No painel dá pra:
+- **Produtos**: criar, editar, publicar/despublicar e excluir produtos da loja (nome, preço, tamanhos, descrição, cor de exibição). Assim que uma edição é publicada, ela aparece automaticamente no site.
+- **Pedidos**: ver todos os pedidos feitos no checkout (itens, valor, endereço, contato) e atualizar o status (Novo / Pago / Enviado / Concluído / Cancelado).
+- **Personalizados**: ver os pedidos enviados pela seção Personalizados e atualizar o status.
+
+Backend: projeto Supabase próprio (`ldxgrdquetzbbbonpjem`), separado do site de eventos, com Row Level Security — o público só consegue enviar pedidos e ler produtos publicados; só quem está logado lê/edita tudo. A chave usada no front-end é pública (anon) por design do Supabase — a segurança real está nas políticas RLS, não na chave.
+
+Se o Supabase ficar fora do ar por algum motivo, a loja (Home, Loja, Coleção, Produto) continua funcionando normalmente usando o catálogo estático de `js/products.js` como reserva automática.
 
 ## Formulários (Netlify Forms)
 
