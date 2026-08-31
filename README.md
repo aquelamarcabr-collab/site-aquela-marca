@@ -10,11 +10,10 @@ loja.html                 Loja (catálogo completo)
 colecao.html?c=slug        Página de coleção (ex: brasilidades)
 produto.html?slug=slug     Página de produto
 sobre.html                 Sobre a Marca (manifesto)
-personalizados.html        Pedido de camiseta personalizada
+personalizados.html        Grade de camisetas personalizadas (Casal, Família, Pet, Projeto especial)
 carrinho.html              Carrinho (localStorage)
 checkout.html               Checkout (formulário + resumo do pedido)
 obrigado-pedido.html         Confirmação pós-compra
-obrigado-personalizado.html  Confirmação pós-pedido personalizado
 404.html
 css/style.css              Design system (editorial, premium, brasileiro)
 js/products.js              Catálogo de produtos (fonte de dados)
@@ -47,9 +46,13 @@ Logo em formato de selo circular com monograma "AM" entrelaçado (`assets/logo-b
 
 ## Produtos e preços (importante)
 
-Como o cliente ainda não enviou fotos, preços definitivos nem catálogo completo, o site foi lançado com **3 produtos de exemplo** da coleção Brasilidades (Amazonas, Rio de Janeiro, São Paulo), com fotos placeholder (blocos tipográficos coloridos, sem fingir ser fotografia real) e preço de exemplo (R$ 149,90).
+Como o cliente ainda não enviou fotos e preços definitivos, o site foi lançado com produtos de exemplo: 3 da coleção Brasilidades (Amazonas, Rio de Janeiro, São Paulo) e 4 da coleção Personalizados (Casal, Família, Pet, Projeto especial), com fotos placeholder (blocos tipográficos coloridos, sem fingir ser fotografia real) e preços de exemplo.
 
-**A partir de agora, o catálogo é editado pelo painel admin** (`/admin/` → aba Produtos), não mais direto no código — é lá que se ajustam preços, tamanhos, descrições e se cadastram novos produtos. `js/products.js` continua no projeto apenas como reserva (usado automaticamente só se o banco estiver indisponível), então pode ficar desatualizado sem problema.
+**A partir de agora, o catálogo é editado pelo painel admin** (`/admin/` → aba Produtos), não mais direto no código — é lá que se ajustam preços, tamanhos, descrições, especificações e se cadastram novos produtos. `js/products.js` continua no projeto apenas como reserva (usado automaticamente só se o banco estiver indisponível), então pode ficar desatualizado sem problema.
+
+No editor de produtos do admin também dá pra:
+- Preencher **especificações** (material, coleção, cuidados etc.) linha a linha no formato `Nome: valor` — aparecem na página do produto no lugar da lista padrão.
+- Marcar um produto como **Personalizável**, o que faz a página do produto mostrar os campos "Para quem é" e "Conte a história" antes do botão de compra.
 
 Fotos reais ainda não são suportadas via upload no painel (os produtos usam blocos de cor no lugar de foto). Quando o cliente tiver as fotos, me avise para adicionarmos upload de imagem.
 
@@ -59,16 +62,16 @@ O carrinho funciona 100% no navegador (localStorage), sem backend. O checkout **
 
 ## Seção Personalizados
 
-Fluxo com 5 etapas: para quem é a peça, escolha de arte, posicionamento, história/foto de referência e dados de contato. As etapas **"Escolha a arte"** e **"Posicionamento"** foram deixadas na estrutura (conforme pedido) mas estão marcadas como **"Em breve"** e não são interativas ainda — é a área que o cliente pediu para já deixar reservada, sem ativar no primeiro momento. O formulário aceita upload de foto de referência (via Netlify Forms, que suporta anexos).
+Personalizados agora funciona como uma **grade de produtos compráveis** (Casal, Família, Pet, Projeto especial), no mesmo padrão visual da Loja — substituindo o antigo formulário de pedido em 5 etapas. O cliente escolhe o modelo, preenche "para quem é" e a história da estampa direto na página do produto, e finaliza a compra pelo checkout normal, como qualquer outro produto. Depois do pedido confirmado, ele envia as fotos de referência pelo WhatsApp para a equipe montar a arte (mensagem reforçada na página de agradecimento do pedido). Quando um item personalizado é comprado, o pedido salvo no admin mostra a personalização informada (para quem / história) junto com os dados do pedido.
 
 ## Painel Admin
 
 Disponível em `/admin/login.html`. Login: `aquelamarca.br@gmail.com` — a senha foi enviada separadamente no chat (não fica salva neste repositório). Recomendo trocá-la após o primeiro acesso (Supabase → Authentication → Users → ⋮ → Reset password).
 
 No painel dá pra:
-- **Produtos**: criar, editar, publicar/despublicar e excluir produtos da loja (nome, preço, tamanhos, descrição, cor de exibição). Assim que uma edição é publicada, ela aparece automaticamente no site.
-- **Pedidos**: ver todos os pedidos feitos no checkout (itens, valor, endereço, contato) e atualizar o status (Novo / Pago / Enviado / Concluído / Cancelado).
-- **Personalizados**: ver os pedidos enviados pela seção Personalizados e atualizar o status.
+- **Produtos**: criar, editar, publicar/despublicar e excluir produtos da loja (nome, preço, tamanhos, descrição, especificações, cor de exibição, se é personalizável). Assim que uma edição é publicada, ela aparece automaticamente no site.
+- **Pedidos**: ver todos os pedidos feitos no checkout (itens, valor, endereço, contato, personalização informada quando houver) e atualizar o status (Novo / Pago / Enviado / Concluído / Cancelado).
+- **Personalizados**: aba mantida no painel para o histórico de pedidos enviados pelo antigo formulário; novos pedidos personalizados agora chegam pela aba Pedidos, junto com os demais.
 
 Backend: projeto Supabase próprio (`ldxgrdquetzbbbonpjem`), separado do site de eventos, com Row Level Security — o público só consegue enviar pedidos e ler produtos publicados; só quem está logado lê/edita tudo. A chave usada no front-end é pública (anon) por design do Supabase — a segurança real está nas políticas RLS, não na chave.
 
@@ -76,9 +79,8 @@ Se o Supabase ficar fora do ar por algum motivo, a loja (Home, Loja, Coleção, 
 
 ## Formulários (Netlify Forms)
 
-Dois formulários já configurados com `data-netlify="true"`, sem precisar de backend:
-- `pedido` (checkout.html) — pedidos de compra.
-- `personalizados` (personalizados.html) — pedidos personalizados, com upload de foto.
+Um formulário já configurado com `data-netlify="true"`, sem precisar de backend:
+- `pedido` (checkout.html) — pedidos de compra, incluindo os personalizados (já que agora eles passam pelo checkout normal).
 
 Após o deploy, configure notificações por e-mail em Site settings → Forms → Form notifications.
 

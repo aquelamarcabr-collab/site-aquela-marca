@@ -13,7 +13,9 @@ function mapRow(row) {
     sizes: row.sizes || [],
     tag: row.tag,
     shortDescription: row.short_description,
-    description: row.description
+    description: row.description,
+    specifications: row.specifications,
+    customizable: !!row.customizable
   };
 }
 

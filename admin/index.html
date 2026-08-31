@@ -98,6 +98,10 @@
           <div class="theme-swatch ph-amazonas" data-theme="amazonas" title="Amazonas"></div>
           <div class="theme-swatch ph-rio" data-theme="rio" title="Rio de Janeiro"></div>
           <div class="theme-swatch ph-sp" data-theme="sp" title="São Paulo"></div>
+          <div class="theme-swatch ph-casal" data-theme="casal" title="Casal"></div>
+          <div class="theme-swatch ph-familia" data-theme="familia" title="Família"></div>
+          <div class="theme-swatch ph-pet" data-theme="pet" title="Pet"></div>
+          <div class="theme-swatch ph-amigos" data-theme="amigos" title="Projeto especial"></div>
         </div>
       </div>
       <div class="field">
@@ -116,6 +120,14 @@
       <div class="field">
         <label for="p-desc">Descrição completa</label>
         <textarea id="p-desc" style="min-height:120px;"></textarea>
+      </div>
+      <div class="field">
+        <label for="p-specs">Especificações (uma por linha, formato "Nome: valor")</label>
+        <textarea id="p-specs" style="min-height:90px;" placeholder="Material: 100% algodão premium, 250g&#10;Coleção: Brasilidades&#10;Cuidados: Lavar à mão ou máquina em ciclo delicado, água fria"></textarea>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="p-customizable">
+        <label for="p-customizable" style="margin:0;">Personalizável (mostra campos "Para quem" e "História" na página do produto)</label>
       </div>
       <div class="checkbox-row">
         <input type="checkbox" id="p-published" checked>
@@ -183,7 +195,12 @@
 
     ordersList.innerHTML = data.map((o) => {
       const itens = Array.isArray(o.itens) ? o.itens : [];
-      const itensText = itens.map((i) => i.qty + 'x ' + i.name + ' (' + i.size + ')').join(', ');
+      const itensText = itens.map((i) => {
+        const custom = i.customization && (i.customization.paraQuem || i.customization.historia)
+          ? ' [Personalização: ' + [i.customization.paraQuem, i.customization.historia].filter(Boolean).join(' — ') + ']'
+          : '';
+        return i.qty + 'x ' + i.name + ' (' + i.size + ')' + custom;
+      }).join(', ');
       return `
       <div class="lead-card">
         <div class="main">
@@ -313,6 +330,8 @@
     document.getElementById('p-tag').value = p ? (p.tag || '') : '';
     document.getElementById('p-short').value = p ? (p.short_description || '') : '';
     document.getElementById('p-desc').value = p ? (p.description || '') : '';
+    document.getElementById('p-specs').value = p ? (p.specifications || '') : '';
+    document.getElementById('p-customizable').checked = p ? !!p.customizable : false;
     document.getElementById('p-published').checked = p ? p.published : true;
 
     selectedTheme = p ? p.theme : 'amazonas';
@@ -353,6 +372,8 @@
       sizes: sizes,
       short_description: document.getElementById('p-short').value.trim(),
       description: document.getElementById('p-desc').value.trim(),
+      specifications: document.getElementById('p-specs').value.trim() || null,
+      customizable: document.getElementById('p-customizable').checked,
       published: document.getElementById('p-published').checked
     };
 

@@ -16,7 +16,8 @@ function saveCart(cart) {
 
 function addToCart(item) {
   const cart = getCart();
-  const existing = cart.find((i) => i.slug === item.slug && i.size === item.size);
+  const itemCustom = JSON.stringify(item.customization || null);
+  const existing = cart.find((i) => i.slug === item.slug && i.size === item.size && JSON.stringify(i.customization || null) === itemCustom);
   if (existing) {
     existing.qty += item.qty;
   } else {

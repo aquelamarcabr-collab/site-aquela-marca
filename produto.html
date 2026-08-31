@@ -120,7 +120,7 @@
       '<div class="pd-info">' +
         '<span class="collection-tag">' + product.collection + '</span>' +
         '<h1>' + product.name + '</h1>' +
-        '<div class="pd-price">' + formatPrice(product.price) + '</div>' +
+        '<div class="pd-price">' + formatPrice(product.price) + (typeof formatInstallment === 'function' ? '<span class="installment">' + formatInstallment(product.price) + '</span>' : '') + '</div>' +
         '<p class="pd-desc">' + product.description + '</p>' +
         '<div>' +
           '<label style="display:block;font-size:.78rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;">Tamanho</label>' +
@@ -128,6 +128,13 @@
             product.sizes.map(function (s, i) { return '<button type="button" class="size-btn' + (i === 0 ? ' active' : '') + '" data-size="' + s + '">' + s + '</button>'; }).join('') +
           '</div>' +
         '</div>' +
+        (product.customizable ?
+          '<div class="mt-1">' +
+            '<div class="field"><label for="custom-para-quem">Para quem é essa camiseta?</label><input type="text" id="custom-para-quem" placeholder="Ex: Eu e o João, minha família, meu pet Bento..."></div>' +
+            '<div class="field"><label for="custom-historia">Conte a história ou ideia da estampa (opcional)</label><textarea id="custom-historia" placeholder="Ex: Queremos uma estampa com a foto do nosso primeiro passeio juntos..."></textarea></div>' +
+            '<p class="form-note">Você faz a compra normalmente e, depois de confirmado o pedido, envia as fotos para a arte pelo WhatsApp — nossa equipe monta a estampa e confirma com você antes de imprimir.</p>' +
+          '</div>'
+        : '') +
         '<div class="qty-row">' +
           '<div class="qty-control">' +
             '<button type="button" id="qty-minus">&minus;</button>' +
@@ -139,9 +146,17 @@
         '<div class="add-feedback" id="add-feedback">Adicionado ao carrinho! <a href="carrinho.html" class="link-underline">Ver carrinho</a></div>' +
         '<div class="pd-meta">' +
           '<dl>' +
-            '<dt>Material</dt><dd>100% algodão premium, 250g</dd>' +
-            '<dt>Coleção</dt><dd>' + product.collection + '</dd>' +
-            '<dt>Cuidados</dt><dd>Lavar à mão ou máquina em ciclo delicado, água fria</dd>' +
+            (product.specifications ?
+              product.specifications.split('\n').map(function (line) {
+                var parts = line.split(':');
+                if (parts.length < 2) return '';
+                return '<dt>' + parts[0].trim() + '</dt><dd>' + parts.slice(1).join(':').trim() + '</dd>';
+              }).join('')
+            :
+              '<dt>Material</dt><dd>100% algodão premium, 250g</dd>' +
+              '<dt>Coleção</dt><dd>' + product.collection + '</dd>' +
+              '<dt>Cuidados</dt><dd>Lavar à mão ou máquina em ciclo delicado, água fria</dd>'
+            ) +
           '</dl>' +
         '</div>' +
       '</div>';
@@ -167,14 +182,22 @@
     });
 
     document.getElementById('add-to-cart-btn').addEventListener('click', function () {
-      addToCart({
+      var item = {
         slug: product.slug,
         name: product.name,
         price: product.price,
         size: selectedSize,
         qty: qty,
         theme: product.theme
-      });
+      };
+      if (product.customizable) {
+        var paraQuem = document.getElementById('custom-para-quem').value.trim();
+        var historia = document.getElementById('custom-historia').value.trim();
+        if (paraQuem || historia) {
+          item.customization = { paraQuem: paraQuem, historia: historia };
+        }
+      }
+      addToCart(item);
       document.getElementById('add-feedback').classList.add('show');
     });
   }

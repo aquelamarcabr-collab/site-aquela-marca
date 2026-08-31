@@ -71,8 +71,14 @@
     }
 
     var rows = cart.map(function (item, i) {
+      var customMeta = '';
+      if (item.customization && (item.customization.paraQuem || item.customization.historia)) {
+        customMeta = '<div class="meta">Personalização: ' +
+          [item.customization.paraQuem, item.customization.historia].filter(Boolean).join(' — ') +
+        '</div>';
+      }
       return '<tr>' +
-        '<td><div class="cart-item-info"><div class="cart-thumb ph-' + item.theme + '"></div><div><h4>' + item.name + '</h4><div class="meta">Tamanho: ' + item.size + '</div><button class="remove-btn" data-index="' + i + '">Remover</button></div></div></td>' +
+        '<td><div class="cart-item-info"><div class="cart-thumb ph-' + item.theme + '"></div><div><h4>' + item.name + '</h4><div class="meta">Tamanho: ' + item.size + '</div>' + customMeta + '<button class="remove-btn" data-index="' + i + '">Remover</button></div></div></td>' +
         '<td><div class="qty-control"><button data-minus="' + i + '">&minus;</button><span>' + item.qty + '</span><button data-plus="' + i + '">&plus;</button></div></td>' +
         '<td>' + formatPrice(item.price) + '</td>' +
         '<td>' + formatPrice(item.price * item.qty) + '</td>' +

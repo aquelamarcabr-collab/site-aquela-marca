@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Personalizados | Aquela Marca</title>
-<meta name="description" content="Toda história merece ser vestida. Crie camisetas personalizadas para casais, famílias, mães, pais, filhos, pets e projetos especiais.">
+<meta name="description" content="Toda história merece ser vestida. Camisetas personalizadas para casais, famílias, pets e projetos especiais — escolha o modelo, compre e envie as fotos.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://aquelamarca.com.br/personalizados.html">
 <link rel="icon" type="image/svg+xml" href="assets/logo-icon.svg">
@@ -12,10 +12,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,wght@0,500;0,600;1,500;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
-<style>
-  .choice-card.disabled{cursor:not-allowed;opacity:.55;}
-  .choice-card.disabled:hover{border-color:var(--line);background:none;color:var(--ink);}
-</style>
 </head>
 <body>
 
@@ -41,96 +37,23 @@
     <div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> / Personalizados</div>
       <h1 style="font-style:italic;">Toda história merece ser vestida.</h1>
-      <p>Camisetas personalizadas para casais, famílias, mães, pais, filhos, pets e projetos especiais — a partir de fotos e memórias.</p>
+      <p>Escolha o modelo, finalize a compra e monte sua estampa depois — para casais, famílias, pets e projetos especiais.</p>
+    </div>
+  </section>
+
+  <section class="bg-cream-2">
+    <div class="container">
+      <div class="how-it-works">
+        <div class="how-step"><span class="how-num">1</span><h4>Escolha o modelo</h4><p>Selecione a camiseta personalizada que combina com sua ideia.</p></div>
+        <div class="how-step"><span class="how-num">2</span><h4>Finalize a compra</h4><p>Conte pra quem é e a história da estampa direto na página do produto.</p></div>
+        <div class="how-step"><span class="how-num">3</span><h4>Envie as fotos</h4><p>Depois do pedido confirmado, envie as fotos pelo WhatsApp para montarmos a arte.</p></div>
+      </div>
     </div>
   </section>
 
   <section>
-    <div class="container" style="max-width:760px;">
-
-      <div class="form-success" id="form-success">Pedido enviado com sucesso! Nossa equipe vai analisar e entrar em contato para os próximos passos.</div>
-
-      <form class="steps" id="personalizado-form" name="personalizados" method="POST" data-netlify="true" netlify-honeypot="bot-field" enctype="multipart/form-data" action="/obrigado-personalizado.html">
-        <input type="hidden" name="form-name" value="personalizados">
-        <input type="hidden" name="para_quem" id="input-para-quem">
-        <p style="display:none;"><label>Não preencher: <input name="bot-field"></label></p>
-
-        <div class="step reveal">
-          <div class="step-head"><div class="step-num">1</div><h3>Para quem é a sua camiseta?</h3></div>
-          <div class="choice-grid" id="para-quem-grid">
-            <div class="choice-card" data-value="Casal">Casal</div>
-            <div class="choice-card" data-value="Família">Família</div>
-            <div class="choice-card" data-value="Mãe">Mãe</div>
-            <div class="choice-card" data-value="Pai">Pai</div>
-            <div class="choice-card" data-value="Filho(a)">Filho(a)</div>
-            <div class="choice-card" data-value="Pet">Pet</div>
-            <div class="choice-card" data-value="Projeto especial">Projeto especial</div>
-          </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step-head"><div class="step-num">2</div><h3>Escolha a arte<span class="soon-badge">Em breve</span></h3></div>
-          <p class="form-note" style="margin-bottom:14px;">Em breve você poderá escolher o estilo de arte direto por aqui. Por enquanto, conte pra gente sua ideia no campo de mensagem abaixo.</p>
-          <div class="choice-grid">
-            <div class="choice-card disabled">Minimalista</div>
-            <div class="choice-card disabled">Ilustrado</div>
-            <div class="choice-card disabled">Tipográfico</div>
-            <div class="choice-card disabled">Fotográfico</div>
-          </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step-head"><div class="step-num">3</div><h3>Posicionamento<span class="soon-badge">Em breve</span></h3></div>
-          <p class="form-note" style="margin-bottom:14px;">Em breve você poderá escolher onde a arte aparece na camiseta.</p>
-          <div class="choice-grid">
-            <div class="choice-card disabled">Peito</div>
-            <div class="choice-card disabled">Costas</div>
-            <div class="choice-card disabled">Manga</div>
-          </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step-head"><div class="step-num">4</div><h3>Conte a sua história</h3></div>
-          <div class="field">
-            <label for="mensagem">Descreva a ideia, a história ou a memória que quer eternizar</label>
-            <textarea id="mensagem" name="mensagem" required placeholder="Ex: Queremos uma camiseta com a foto do nosso primeiro passeio com o cachorro..."></textarea>
-          </div>
-          <div class="field">
-            <label for="foto">Envie uma foto de referência (opcional)</label>
-            <input type="file" id="foto" name="foto" accept="image/*">
-          </div>
-        </div>
-
-        <div class="step reveal">
-          <div class="step-head"><div class="step-num">5</div><h3>Seus dados</h3></div>
-          <div class="form-row">
-            <div class="field">
-              <label for="nome">Nome completo *</label>
-              <input type="text" id="nome" name="nome" required>
-            </div>
-            <div class="field">
-              <label for="telefone">Telefone / WhatsApp *</label>
-              <input type="tel" id="telefone" name="telefone" required>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="field">
-              <label for="email">E-mail *</label>
-              <input type="email" id="email" name="email" required>
-            </div>
-            <div class="field">
-              <label for="tamanho">Tamanho desejado</label>
-              <select id="tamanho" name="tamanho">
-                <option value="">Selecione</option>
-                <option>P</option><option>M</option><option>G</option><option>GG</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Enviar pedido personalizado</button>
-        <p class="form-note text-center">Após o envio, nossa equipe entra em contato pelo WhatsApp ou e-mail para alinhar os detalhes e o valor da peça.</p>
-      </form>
+    <div class="container">
+      <div class="grid products-grid" id="products-list"></div>
     </div>
   </section>
 </main>
@@ -183,47 +106,35 @@
   <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
 </a>
 
+<script src="js/products.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
 <script>
-  var selectedParaQuem = null;
-  document.querySelectorAll('#para-quem-grid .choice-card').forEach(function (card) {
-    card.addEventListener('click', function () {
-      document.querySelectorAll('#para-quem-grid .choice-card').forEach(function (c) { c.classList.remove('selected'); });
-      card.classList.add('selected');
-      selectedParaQuem = card.dataset.value;
-      document.getElementById('input-para-quem').value = selectedParaQuem;
-    });
-  });
+  var slug = 'personalizados';
+
+  function renderPersonalizadosProducts(allProducts) {
+    var products = allProducts.filter(function (p) { return p.collectionSlug === slug; });
+    document.getElementById('products-list').innerHTML = products.map(function (p) {
+      return '<a href="produto.html?slug=' + p.slug + '" class="product-card reveal in">' +
+        '<div class="product-photo ph-' + p.theme + '">' +
+          (p.tag ? '<span class="tag">' + p.tag + '</span>' : '') +
+          '<div class="label"><span>' + p.collection + '</span><h3>' + p.name + '</h3></div>' +
+          '<div class="promo-banner">Monte sua estampa · envie as fotos após a compra</div>' +
+        '</div>' +
+        '<div class="product-info"><div><h4>' + p.name + '</h4><div class="collection-tag">' + p.collection + '</div></div>' +
+          '<span class="price-block"><span class="price">' + formatPrice(p.price) + '</span><span class="installment">' + formatInstallment(p.price) + '</span></span>' +
+        '</div>' +
+      '</a>';
+    }).join('');
+  }
+
+  renderPersonalizadosProducts(PRODUCTS);
 </script>
 <script type="module">
-  import { supabase } from './js/supabase-client.js';
-
-  var form = document.getElementById('personalizado-form');
-  form.addEventListener('submit', async function (e) {
-    e.preventDefault();
-    var fd = new FormData(form);
-
-    var record = {
-      para_quem: fd.get('para_quem') || null,
-      mensagem: fd.get('mensagem'),
-      nome: fd.get('nome'),
-      telefone: fd.get('telefone'),
-      email: fd.get('email'),
-      tamanho: fd.get('tamanho') || null
-    };
-
-    try {
-      await Promise.race([
-        supabase.from('personalizados').insert(record),
-        new Promise(function (resolve) { setTimeout(resolve, 3000); })
-      ]);
-    } catch (err) {
-      console.error('Erro ao salvar pedido personalizado no painel admin:', err);
-    }
-
-    form.submit();
-  });
+  import { fetchProducts } from './js/products-api.js';
+  fetchProducts().then(function (products) {
+    if (products && products.length) renderPersonalizadosProducts(products);
+  }).catch(function () {});
 </script>
 </body>
 </html>

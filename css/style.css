@@ -183,11 +183,34 @@ section{padding:96px 0;}
 .ph-amazonas{background:linear-gradient(150deg,#12432F,#2E7350 55%,#0B2A1D);}
 .ph-rio{background:linear-gradient(150deg,#33456B,#A15468 60%,#1E2A47);}
 .ph-sp{background:linear-gradient(150deg,#3A3A3A,#6B675F 55%,#1E1E1E);}
+.ph-casal{background:linear-gradient(150deg,#7A2E3B,#B2532E 55%,#4A1A22);}
+.ph-familia{background:linear-gradient(150deg,#5C3A21,#B2532E 55%,#2E1C10);}
+.ph-pet{background:linear-gradient(150deg,#2E4A3A,#6E8C5C 55%,#182A1F);}
+.ph-amigos{background:linear-gradient(150deg,#3A2E5C,#8C6EB2 55%,#1F182E);}
+
+.product-photo .promo-banner{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;background:var(--terracotta);color:#fff;
+  font-size:.72rem;font-weight:700;text-align:center;padding:9px 10px;letter-spacing:.2px;
+}
 
 .product-info{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
 .product-info h4{font-family:var(--ff-body);font-weight:600;font-size:.92rem;}
 .product-info .price{font-weight:700;font-size:.92rem;color:var(--terracotta-dark);}
+.product-info .price-old{font-weight:500;font-size:.8rem;color:var(--ink-faint);text-decoration:line-through;margin-right:6px;}
+.product-info .installment{display:block;font-size:.72rem;color:var(--ink-faint);font-weight:400;margin-top:2px;}
+.price-block{text-align:right;}
 .product-info .collection-tag{font-size:.72rem;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.installment{display:block;font-size:.8rem;color:var(--ink-faint);font-weight:400;margin-top:6px;}
+
+/* ---------- How it works (Personalizados) ---------- */
+.how-it-works{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;padding:48px 0;text-align:center;}
+@media(max-width:768px){.how-it-works{grid-template-columns:1fr;gap:28px;}}
+.how-num{
+  display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;
+  background:var(--terracotta);color:#fff;font-family:var(--ff-display);font-style:italic;font-size:1rem;margin-bottom:14px;
+}
+.how-step h4{font-size:1rem;margin-bottom:6px;}
+.how-step p{font-size:.88rem;color:var(--ink-faint);max-width:280px;margin:0 auto;}
 
 .filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px;}
 .filter-btn{

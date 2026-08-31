@@ -65,11 +65,19 @@
   } else {
     var total = getCartTotal();
     var summaryText = cart.map(function (i) {
-      return i.qty + 'x ' + i.name + ' (Tam. ' + i.size + ') — ' + formatPrice(i.price * i.qty);
+      var custom = i.customization && (i.customization.paraQuem || i.customization.historia)
+        ? ' [Personalização: ' + [i.customization.paraQuem, i.customization.historia].filter(Boolean).join(' — ') + ']'
+        : '';
+      return i.qty + 'x ' + i.name + ' (Tam. ' + i.size + ')' + custom + ' — ' + formatPrice(i.price * i.qty);
     }).join(' | ') + ' — TOTAL: ' + formatPrice(total);
 
+    var hasCustomItem = cart.some(function (i) { return i.customization && (i.customization.paraQuem || i.customization.historia); });
+
     var itemsHtml = cart.map(function (item) {
-      return '<div class="summary-row"><span>' + item.qty + 'x ' + item.name + ' (' + item.size + ')</span><span>' + formatPrice(item.price * item.qty) + '</span></div>';
+      var custom = item.customization && (item.customization.paraQuem || item.customization.historia)
+        ? '<div class="meta">Personalização: ' + [item.customization.paraQuem, item.customization.historia].filter(Boolean).join(' — ') + '</div>'
+        : '';
+      return '<div class="summary-row"><span>' + item.qty + 'x ' + item.name + ' (' + item.size + ')' + custom + '</span><span>' + formatPrice(item.price * item.qty) + '</span></div>';
     }).join('');
 
     root.innerHTML =
@@ -103,6 +111,7 @@
 
           '<div class="field mt-1"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes" placeholder="Alguma informação adicional sobre o pedido ou entrega?"></textarea></div>' +
 
+          (hasCustomItem ? '<p class="form-note">Seu pedido inclui item(ns) personalizado(s): depois de confirmado, envie as fotos e a arte pelo WhatsApp para montarmos a estampa.</p>' : '') +
           '<p class="form-note">Pagamento: nossa equipe entrará em contato pelo WhatsApp para confirmar a forma de pagamento (Pix, cartão ou link de pagamento) antes do envio.</p>' +
           '<button type="submit" class="btn btn-primary btn-block mt-2">Confirmar pedido</button>' +
         '</form>' +
@@ -127,7 +136,11 @@
       e.preventDefault();
       var fd = new FormData(checkoutForm);
       var itens = cart.map(function (i) {
-        return { slug: i.slug, name: i.name, size: i.size, qty: i.qty, price: i.price };
+        var out = { slug: i.slug, name: i.name, size: i.size, qty: i.qty, price: i.price };
+        if (i.customization && (i.customization.paraQuem || i.customization.historia)) {
+          out.customization = i.customization;
+        }
+        return out;
       });
 
       var order = {
