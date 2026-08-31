@@ -90,10 +90,7 @@ section{padding:96px 0;}
   backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
 }
 .nav-wrap{display:flex;align-items:center;justify-content:space-between;height:84px;gap:20px;}
-.logo{display:flex;align-items:center;gap:12px;}
 .logo img{height:52px;width:auto;}
-.logo-word{font-family:var(--ff-display);font-size:1.15rem;font-weight:600;letter-spacing:.5px;color:var(--ink);white-space:nowrap;}
-@media(max-width:560px){.logo-word{display:none;}}
 .nav-links{display:flex;align-items:center;gap:36px;}
 .nav-links a{font-weight:600;font-size:.78rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink);position:relative;padding:6px 0;}
 .nav-links a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--terracotta);transition:width .25s ease;}
