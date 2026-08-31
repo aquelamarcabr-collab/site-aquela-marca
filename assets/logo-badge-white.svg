@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Aquela Marca">
+  <defs>
+    <path id="topArcW" d="M 24,100 A 76,76 0 0 1 176,100" fill="none"/>
+    <path id="bottomArcW" d="M 24,100 A 76,76 0 0 0 176,100" fill="none"/>
+  </defs>
+
+  <circle cx="100" cy="100" r="94" fill="none" stroke="#F7F3EC" stroke-width="1.5"/>
+
+  <text font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="12.5" font-weight="600" letter-spacing="3.5" fill="#F7F3EC">
+    <textPath href="#topArcW" startOffset="50%" text-anchor="middle">AQUELA MARCA</textPath>
+  </text>
+  <text font-family="'Inter','Segoe UI',Arial,sans-serif" font-size="10" font-weight="600" letter-spacing="3" fill="#E3A77F">
+    <textPath href="#bottomArcW" startOffset="50%" text-anchor="middle">MALHA 100% ALGODÃO</textPath>
+  </text>
+
+  <g stroke="#F7F3EC" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 62,132 L 62,68 L 100,100 L 138,68 L 138,132"/>
+  </g>
+  <g stroke="#E3A77F" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 70,134 L 100,64 L 130,134"/>
+    <path d="M 83,104 L 117,104"/>
+  </g>
+</svg>

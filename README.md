@@ -43,7 +43,7 @@ grep -rl "5511900000000" . | xargs sed -i 's/5511900000000/55SEUNUMERO/g'
 
 ## Logo
 
-Marca criada do zero em SVG (`assets/logo-wordmark.svg`, versão branca e ícone/monograma "AM"), com tipografia serifada itálica remetendo a moda editorial, nas cores propostas (tinta escura + terracota). Totalmente editável e substituível pela logo oficial, se houver.
+Logo em formato de selo circular com monograma "AM" entrelaçado (`assets/logo-badge.svg`, versão branca e ícone), baseada na referência visual enviada pelo cliente. Totalmente editável em SVG.
 
 ## Produtos e preços (importante)
 
